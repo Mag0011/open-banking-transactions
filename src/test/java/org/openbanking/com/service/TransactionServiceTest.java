@@ -16,8 +16,15 @@ public class TransactionServiceTest {
     @Autowired
     TransactionService transactionService;
 
+//    @Test
+//    public void whenAccountNumberHasTransactions_Then_ReturnPopulatedList() {
+//        List mockResponse = Collections.emptyList();
+//        List response = transactionService.findAllByAccountNumber(anyString());
+//        assertTrue(mockResponse.size() > 0);
+//    }
+
     @Test
-    public void whenGettingTransactions_Then_ReturnList() {
+    public void whenAccountNumberHasNoTransactions_Then_ReturnEmptyList() {
         List mockResponse = Collections.emptyList();
         List response = transactionService.findAllByAccountNumber(anyString());
         assertEquals(mockResponse.size(), response.size());
