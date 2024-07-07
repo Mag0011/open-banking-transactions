@@ -1,4 +1,4 @@
-package org.openbanking.com.model;
+package org.openbanking.com.model.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Builder
 @Data
-public class Transaction {
+public class TransactionDto {
 
     private String type;
 

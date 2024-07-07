@@ -1,5 +1,6 @@
 package org.openbanking.com.controller;
 
+import org.openbanking.com.model.dto.TransactionDto;
 import org.openbanking.com.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,8 @@ public class TransactionController {
     TransactionService transactionService;
 
     @GetMapping
-    public List getTransactionService(@PathVariable(value = "accountNumber") String accountNumber) {
+    public List<TransactionDto> getTransactionService(@PathVariable(value = "accountNumber") String accountNumber) {
         return transactionService.findAllByAccountNumber(accountNumber);
     }
+
 }
