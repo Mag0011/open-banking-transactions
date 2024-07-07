@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
     testImplementation("io.rest-assured:rest-assured:4.2.0")
+    testImplementation("org.hamcrest:hamcrest:2.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     compileOnly("org.projectlombok:lombok")

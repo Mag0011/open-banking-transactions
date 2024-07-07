@@ -17,7 +17,7 @@ public class TransactionServiceImpl implements TransactionService{
 
     public List<TransactionDto> findAllByAccountNumber(String accountNumber){
         return List.of(TransactionDto.builder()
-                .accountNumber(12345678)
+                .accountNumber(1234)
                 .type("Standard")
                 .date(LocalDate.now())
                 .amount(BigDecimal.valueOf(150000L))
