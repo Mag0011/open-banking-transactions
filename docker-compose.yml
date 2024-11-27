@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8
+    container_name: 'open_bank_db'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: transactions
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "5037:3306"
+
+
+
