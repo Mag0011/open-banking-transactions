@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface TransactionService {
 
-    List<TransactionDto> findAllByAccountNumber(String accountNumber);
+    List<TransactionDto> findAllByAccountNumber(Long accountNumber);
 
 }

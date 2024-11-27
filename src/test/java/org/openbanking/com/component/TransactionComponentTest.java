@@ -12,17 +12,17 @@ public class TransactionComponentTest {
         when()
                 .get("/transactions/123456789")
                 .then()
-                .body("$", hasSize(1))
+                .body("$", hasSize(2))
                 .statusCode(200);
     }
 
-//    @Test
-//    public void givenAccountNumber_WhenJsonResponseHasBody_ThenStatus200AndEmptyBody() {
-//        when()
-//                .get("/transactions/123")
-//                .then()
-//                .body("$", hasSize(0))
-//                .statusCode(200);
-//    }
+    @Test
+    public void givenAccountNumber_WhenJsonResponseHasBody_ThenStatus200AndEmptyBody() {
+        when()
+                .get("/transactions/123")
+                .then()
+                .body("$", hasSize(0))
+                .statusCode(200);
+    }
 
 }

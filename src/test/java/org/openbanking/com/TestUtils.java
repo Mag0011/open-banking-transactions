@@ -1,3 +1,5 @@
+package org.openbanking.com;
+
 import org.openbanking.com.model.Transaction;
 import org.openbanking.com.model.dto.TransactionDto;
 

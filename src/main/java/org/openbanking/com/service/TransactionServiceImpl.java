@@ -1,13 +1,14 @@
 package org.openbanking.com.service;
 
 import org.openbanking.com.model.dto.TransactionDto;
+import org.openbanking.com.persistence.TransactionRepository;
 import org.openbanking.com.service.mapper.TransactionToDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{
@@ -15,15 +16,15 @@ public class TransactionServiceImpl implements TransactionService{
     @Autowired
     TransactionToDtoMapper transactionMapper;
 
-    public List<TransactionDto> findAllByAccountNumber(String accountNumber){
-        return List.of(TransactionDto.builder()
-                .accountNumber(1234)
-                .type("Standard")
-                .date(LocalDate.now())
-                .amount(BigDecimal.valueOf(150000L))
-                .currency("USD")
-                .merchantLogo("Test_Logo")
-                .merchantName("Test_Name").build());
+    @Autowired
+    TransactionRepository transactionRepository;
+
+    @Transactional
+    public List<TransactionDto> findAllByAccountNumber(Long accountNumber){
+        return transactionRepository.findTransactionByAccountNumber(accountNumber)
+                .stream()
+                .map(transaction -> transactionMapper.transactionToTransactionDto(transaction))
+                .collect(Collectors.toList());
     }
 
 }
