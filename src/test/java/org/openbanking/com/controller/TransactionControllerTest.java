@@ -8,7 +8,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.openbanking.com.TestUtils.mockTransactionDtoBuilder;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = TransactionController.class)
@@ -23,9 +28,14 @@ public class TransactionControllerTest {
 
     @Test
     public void testSuccessfulTransaction() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/transactions/{accountNumber}", "123456"))
+        when(transactionService.findAllByAccountNumber(anyLong()))
+                .thenReturn(List.of(
+                        mockTransactionDtoBuilder().build(),
+                        mockTransactionDtoBuilder().build()
+                ));
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/transactions/123456789"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test
