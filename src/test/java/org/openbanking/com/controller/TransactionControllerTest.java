@@ -1,47 +1,78 @@
 package org.openbanking.com.controller;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openbanking.com.service.TransactionService;
+import org.openbanking.com.persistence.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MySQLContainer;
 
-import java.util.List;
-
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.openbanking.com.TestUtils.mockTransactionDtoBuilder;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = TransactionController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TransactionControllerTest {
 
+    @LocalServerPort
+    private Integer port;
+
     @Autowired
-    private MockMvc mockMvc;
+    TransactionRepository transactionRepository;
 
-    @MockBean
-    TransactionService transactionService;
+    static MySQLContainer<?> mysql =
+            new MySQLContainer<>("mysql:8")
+                    .withDatabaseName("transactions")
+                    .withInitScript("sql/database_init.sql");
 
+    @BeforeAll
+    static void beforeAll() {
+        mysql.start();
+    }
 
-    @Test
-    public void testSuccessfulTransaction() throws Exception {
-        when(transactionService.findAllByAccountNumber(anyLong()))
-                .thenReturn(List.of(
-                        mockTransactionDtoBuilder().build(),
-                        mockTransactionDtoBuilder().build()
-                ));
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/transactions/123456789"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+    @AfterAll
+    static void afterAll() {
+        mysql.close();
+    }
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.baseURI = "http://localhost:" + port;
+    }
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mysql::getJdbcUrl);
+        registry.add("spring.datasource.username", mysql::getUsername);
+        registry.add("spring.datasource.password", mysql::getPassword);
     }
 
     @Test
-    public void testFailingTransaction() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/transactions/"))
-                .andExpect(status().isNotFound());
+    public void testSuccessfulTransaction() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/transactions/123456789")
+                .then()
+                .statusCode(200)
+                .body("$", hasSize(2));
+    }
+
+    @Test
+    public void testFailingTransaction() {
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/transactions/837461028")
+                .then()
+                .statusCode(200)
+                .body("$", hasSize(0));
     }
 
 }
