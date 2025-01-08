@@ -1,5 +1,6 @@
 extra["swagger-ui.version"] = "5.3.1"
 extra["springdoc.version"] = "1.6.14"
+val testcontainersVersion by extra("1.19.8")
 
 plugins {
     java
@@ -7,7 +8,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5"
     id("org.openapi.generator") version "7.4.0"
 }
-val testcontainersVersion by extra("1.19.8")
 
 group = "org.open-banking.com"
 version = "0.0.1-SNAPSHOT"
@@ -56,6 +56,13 @@ dependencyManagement {
     }
 }
 
+// TASKS
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+// Custom tasks
 tasks.named("openApiGenerate", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
     generatorName = "spring"
     inputSpec = "${layout.projectDirectory}/src/main/resources/open-api/account-info-openapi.yaml"
@@ -67,12 +74,6 @@ tasks.named("openApiGenerate", org.openapitools.generator.gradle.plugin.tasks.Ge
     additionalProperties.put("basePackage", "com.open-banking")
 }
 
-// TASKS
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 tasks.register("copyGeneratedModelIntoProject", Copy::class) {
     copy {
         from("${layout.buildDirectory.get()}/generated/open-banking/src/main/java/com/open_banking/model")
@@ -80,12 +81,27 @@ tasks.register("copyGeneratedModelIntoProject", Copy::class) {
         include("**/*")
         dependsOn("openApiGenerate")
     }
+    doLast {
+        println("The resources were successfully copied into: ${layout.projectDirectory}/src/main/java/org/openbanking/com/model/external")
+    }
 }
 
-//tasks.bootRun {
-//    dependsOn( "openApiGenerate")
+tasks.register("cleanUpGeneratedSources", Delete::class) {
+    var dirToDelete = "${layout.projectDirectory}/src/main/java/org/openbanking/com/model/external"
+    delete(dirToDelete)
+    doLast {
+        println("Deleted directory: $dirToDelete")
+    }
+}
+
+//tasks.compileJava {
+//    dependsOn("openApiGenerate")
 //}
 
 tasks.build {
-    dependsOn( "copyGeneratedModelIntoProject")
+    dependsOn("copyGeneratedModelIntoProject")
+}
+
+tasks.clean {
+    dependsOn("cleanUpGeneratedSources")
 }
