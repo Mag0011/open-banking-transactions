@@ -27,4 +27,9 @@ public class TransactionServiceImpl implements TransactionService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<TransactionDto> findExternalTransactionsByAccountId(Long accountNumber) {
+        return List.of();
+    }
+
 }

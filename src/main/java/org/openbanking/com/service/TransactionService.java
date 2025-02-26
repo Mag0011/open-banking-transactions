@@ -8,4 +8,6 @@ public interface TransactionService {
 
     List<TransactionDto> findAllByAccountNumber(Long accountNumber);
 
+    List<TransactionDto> findExternalTransactionsByAccountId(Long accountNumber);
+
 }
