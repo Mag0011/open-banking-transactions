@@ -1,5 +1,6 @@
 package org.openbanking.com.service;
 
+import org.openbanking.com.client.impl.RestTransactionApiClientImpl;
 import org.openbanking.com.model.dto.TransactionDto;
 import org.openbanking.com.persistence.TransactionRepository;
 import org.openbanking.com.service.mapper.TransactionToDtoMapper;
@@ -11,13 +12,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TransactionServiceImpl implements TransactionService{
+public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     TransactionToDtoMapper transactionMapper;
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    @Autowired
+    RestTransactionApiClientImpl restTransactionApiClient;
 
     @Transactional
     public List<TransactionDto> findAllByAccountNumber(Long accountNumber){

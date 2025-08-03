@@ -1,6 +1,5 @@
 package org.openbanking.com.controller;
 
-import org.openbanking.com.model.Transaction;
 import org.openbanking.com.model.dto.TransactionDto;
 import org.openbanking.com.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;

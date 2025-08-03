@@ -41,12 +41,13 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:2.7.18")
     testImplementation("io.rest-assured:rest-assured:4.2.0")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.junit.platform:junit-platform-launcher")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 }
@@ -59,7 +60,9 @@ dependencyManagement {
 // TASKS
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnitPlatform{
+        enableAssertions = true
+    }
 }
 
 // Custom tasks
@@ -94,9 +97,9 @@ tasks.register("cleanUpGeneratedSources", Delete::class) {
     }
 }
 
-//tasks.compileJava {
-//    dependsOn("openApiGenerate")
-//}
+tasks.compileJava {
+    dependsOn("openApiGenerate")
+}
 
 tasks.build {
     dependsOn("copyGeneratedModelIntoProject")
